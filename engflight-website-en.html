@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENGFLIGHT — Turn your English into foreign clients</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --amethyst:#9956DE;--amethyst-d:#7B3CBB;--slate:#7274ED;--slate-d:#5456C9;
+  --sky:#1FA7E1;--sky-d:#1785B5;--downy:#6ED1CF;--downy-d:#4FB3B1;
+  --green:#75D06A;--green-d:#57AE4D;--rose:#FFB356;--rose-d:#E0913A;
+  --mona:#FF8B8B;--mona-d:#DF6A6A;--illusion:#FB96BB;--illusion-d:#DC7399;
+  --ink:#2F4858;--ink-2:#6C8091;--line:#E9F1F4;--mint:#EAF8F7;--paper:#fff;--wash:#F6FAFB;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:600;background:var(--wash);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1120px;margin:0 auto;padding:14px 16px 110px;position:relative;z-index:1}
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.2}
+.b1{width:440px;height:440px;background:var(--downy);top:-150px;left:-130px}
+.b2{width:400px;height:400px;background:var(--illusion);top:420px;right:-160px}
+.b3{width:480px;height:480px;background:var(--slate);bottom:-200px;left:18%}
+h3{font-weight:900;font-size:17px;letter-spacing:-.2px}
+h4{font-weight:900;font-size:14.5px}
+.sub{font-size:13px;color:var(--ink-2);font-weight:700}
+.sp{margin-top:16px}.sp8{margin-top:9px}.sp28{margin-top:32px}
+.center{text-align:center}
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:9px;background:var(--paper);border:3px solid var(--downy);border-radius:18px;box-shadow:0 5px 0 var(--downy);padding:8px 14px;cursor:pointer}
+.mark b{font-weight:900;font-size:18px;letter-spacing:-.5px;color:#16716D}
+.mark span{font-size:11px;font-weight:700;color:var(--ink-2)}
+.nav{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.tab{font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;border:3px solid var(--line);background:var(--paper);color:var(--ink-2);border-radius:12px;padding:8px 12px;box-shadow:0 4px 0 var(--line);transition:transform .13s cubic-bezier(.2,.9,.3,1.3),box-shadow .13s}
+.tab:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--line)}
+.tab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.tab[aria-selected=true]{background:var(--slate);border-color:var(--slate-d);box-shadow:0 4px 0 var(--slate-d);color:#fff}
+.tab:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.panel[hidden],.sheet[hidden],[hidden]{display:none}
+.panel:not([hidden]),.sheet:not([hidden]){animation:rise .34s cubic-bezier(.2,.8,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.stagger>*{animation:rise .42s cubic-bezier(.2,.8,.3,1) both}
+.stagger>*:nth-child(2){animation-delay:.06s}.stagger>*:nth-child(3){animation-delay:.12s}
+.stagger>*:nth-child(4){animation-delay:.18s}.stagger>*:nth-child(5){animation-delay:.24s}
+.hero{position:relative;background:linear-gradient(150deg,#FFFFFF 0%,#F2FBFA 100%);border:3px solid var(--downy);border-radius:30px;box-shadow:0 9px 0 var(--downy);padding:34px 24px;overflow:hidden;margin-top:10px}
+.hero h1{font-weight:900;font-size:42px;line-height:1.08;letter-spacing:-1.6px;max-width:19ch}
+@media(max-width:720px){.hero h1{font-size:30px;letter-spacing:-1px}.hero{padding:26px 18px}}
+.hero .lede{font-size:16.5px;font-weight:700;color:var(--ink-2);max-width:54ch;margin-top:14px}
+.ctarow{display:flex;gap:11px;flex-wrap:wrap;margin-top:22px;align-items:center}
+.trustrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;font-size:12.5px;font-weight:800;color:var(--ink-2)}
+.trustrow span{display:flex;align-items:center;gap:6px}
+.tick{width:19px;height:19px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:900;flex:none}
+.hshape{position:absolute;right:-40px;top:-30px;opacity:.5;pointer-events:none}
+@media(max-width:900px){.hshape{display:none}}
+.sechead{margin:40px 0 16px;max-width:58ch}
+.sechead .eyebrow{font-size:12px;font-weight:900;color:var(--downy-d);letter-spacing:1.2px;text-transform:uppercase}
+.sechead h2{font-weight:900;font-size:28px;letter-spacing:-.9px;line-height:1.15;margin-top:5px}
+@media(max-width:640px){.sechead h2{font-size:23px}}
+.sechead p{font-size:14.5px;color:var(--ink-2);font-weight:700;margin-top:7px}
+.card{background:var(--paper);border:3px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 5px 0 var(--line)}
+.card.tint{background:var(--mint);border-color:var(--downy);box-shadow:0 5px 0 var(--downy)}
+.card.lift{transition:transform .16s cubic-bezier(.2,.9,.3,1.3),box-shadow .16s}
+.card.lift:hover{transform:translateY(-4px);box-shadow:0 9px 0 var(--line)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.side{grid-template-columns:1.4fr .85fr}
+@media(max-width:980px){.g3,.g4,.side{grid-template-columns:1fr}}
+@media(max-width:680px){.g2{grid-template-columns:1fr}}
+.stat{border-radius:20px;padding:17px;color:#fff;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.15);right:-46px;top:-50px}
+.stat .n{font-size:30px;font-weight:900;line-height:1.05;position:relative;letter-spacing:-1px}
+.stat .l{font-size:12.5px;font-weight:700;opacity:.95;position:relative}
+.s1{background:var(--green);box-shadow:0 6px 0 var(--green-d)}
+.s2{background:var(--sky);box-shadow:0 6px 0 var(--sky-d)}
+.s3{background:var(--amethyst);box-shadow:0 6px 0 var(--amethyst-d)}
+.s4{background:var(--rose);box-shadow:0 6px 0 var(--rose-d)}
+.sticker{display:inline-block;background:var(--rose);color:#fff;font-weight:900;font-size:12px;padding:7px 14px;border-radius:12px;box-shadow:0 4px 0 var(--rose-d);transform:rotate(-2.5deg)}
+.sticker.g{background:var(--green);box-shadow:0 4px 0 var(--green-d);transform:rotate(2deg)}
+.btn{font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;color:#fff;border:none;border-radius:13px;padding:11px 18px;transition:transform .13s cubic-bezier(.2,.9,.3,1.3),box-shadow .13s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(4px)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+.btn.big{font-size:16px;padding:15px 26px;border-radius:16px}
+.b-green{background:var(--green);box-shadow:0 5px 0 var(--green-d)}.b-green:hover{box-shadow:0 7px 0 var(--green-d)}.b-green:active{box-shadow:0 1px 0 var(--green-d)}
+.b-sky{background:var(--sky);box-shadow:0 5px 0 var(--sky-d)}.b-sky:hover{box-shadow:0 7px 0 var(--sky-d)}.b-sky:active{box-shadow:0 1px 0 var(--sky-d)}
+.b-purple{background:var(--amethyst);box-shadow:0 5px 0 var(--amethyst-d)}.b-purple:hover{box-shadow:0 7px 0 var(--amethyst-d)}.b-purple:active{box-shadow:0 1px 0 var(--amethyst-d)}
+.b-slate{background:var(--slate);box-shadow:0 5px 0 var(--slate-d)}.b-slate:hover{box-shadow:0 7px 0 var(--slate-d)}.b-slate:active{box-shadow:0 1px 0 var(--slate-d)}
+.b-sm{padding:7px 12px;font-size:12.5px;border-radius:11px}
+.ghost{background:var(--paper);color:var(--ink-2);border:3px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.ghost:hover{box-shadow:0 6px 0 var(--line)}
+.ghost[aria-pressed=true]{background:var(--sky);color:#fff;border-color:var(--sky-d);box-shadow:0 4px 0 var(--sky-d)}
+.pill{display:inline-block;font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px}
+.p-green{background:#E3F6E0;color:#3E8A35}.p-rose{background:#FFEFDC;color:#B36C1C}
+.p-sky{background:#DFF2FC;color:#146B93}.p-purple{background:#F0E4FC;color:#6F33AB}
+.p-mona{background:#FFE6E6;color:#C24F4F}.p-grey{background:#EEF3F5;color:#6C8091}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.steps{grid-template-columns:1fr}}
+.step{background:var(--paper);border:3px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 5px 0 var(--line);transition:transform .16s}
+.step:hover{transform:translateY(-4px)}
+.stepn{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px;margin-bottom:10px}
+.tst{background:var(--paper);border:3px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 5px 0 var(--line);transition:transform .16s}
+.tst:hover{transform:translateY(-4px)}
+.tavatar{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;flex:none}
+.arrowup{font-size:22px;font-weight:900;color:var(--green-d);letter-spacing:-1px}
+.edwrap{position:relative}
+.edwrap textarea,.mirror{font-family:inherit;font-size:15px;font-weight:600;line-height:1.75;padding:15px;border-radius:16px;border:3px solid var(--line);width:100%;min-height:190px;white-space:pre-wrap;word-wrap:break-word}
+.edwrap textarea{position:relative;background:transparent;color:var(--ink);resize:vertical;display:block}
+.edwrap textarea:focus{outline:none;border-color:var(--sky)}
+.mirror{position:absolute;inset:0;pointer-events:none;color:transparent;overflow:hidden;background:var(--paper)}
+mark.h{background:#FFE0B8;border-radius:5px;color:transparent}
+mark.s{background:#FFD5D5;border-radius:5px;color:transparent}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--ink-2)}
+.sw{display:inline-block;width:11px;height:11px;border-radius:4px;vertical-align:-1px;margin-right:5px}
+.meter{height:13px;border-radius:999px;background:#EDF3F5;overflow:hidden;margin:8px 0 5px}
+.meter i{display:block;height:100%;width:0;border-radius:999px;transition:width .5s cubic-bezier(.2,.8,.3,1),background .3s}
+.readout{font-size:42px;font-weight:900;line-height:1;letter-spacing:-2px}
+.flaglist{list-style:none;display:flex;flex-direction:column;gap:7px;margin-top:9px}
+.flaglist li{background:#FFF6EA;border-left:5px solid var(--rose);border-radius:10px;padding:8px 11px;font-size:13px;font-weight:700;animation:rise .3s ease both}
+.flaglist li.scope{background:#FFEFEF;border-left-color:var(--mona)}
+.flaglist li.ok{background:#E9F8F0;border-left-color:var(--green)}
+.row{display:flex;align-items:center;gap:11px;padding:11px 0;border-top:2px solid #F0F5F7;flex-wrap:wrap}
+.row:first-of-type{border-top:none}
+.chk{width:25px;height:25px;border-radius:9px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:900;font-size:13px;flex:none}
+.mem{display:flex;align-items:center;gap:10px;background:var(--wash);border-radius:14px;padding:9px 11px}
+.mem .d{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:12.5px;flex:none}
+.choice{display:block;width:100%;text-align:left;font-family:inherit;font-weight:700;font-size:14px;background:var(--paper);border:3px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--ink);transition:transform .13s cubic-bezier(.2,.9,.3,1.3),border-color .13s}
+.choice:hover{border-color:var(--sky);transform:translateX(4px)}
+.choice[aria-pressed=true]{border-color:var(--slate);background:#F4F4FE}
+.bubble{background:var(--mint);border-radius:18px 18px 18px 5px;padding:13px 16px;font-size:14.5px;font-weight:700;margin-bottom:12px}
+input[type=range]{accent-color:var(--amethyst);width:100%;height:24px}
+input[type=text],input[type=search],select{font-family:inherit;font-weight:700;font-size:14px;color:var(--ink);border:3px solid var(--line);border-radius:13px;padding:11px 13px;width:100%;background:var(--paper)}
+input:focus,select:focus{outline:none;border-color:var(--sky)}
+label.f{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);margin:10px 0 4px}
+.scale{position:relative;height:30px;border-radius:999px;background:linear-gradient(90deg,#FFD5D5 0%,#FFE9C9 35%,#DCF3D8 60%,#DCF3D8 100%);margin-top:8px}
+.scale .pin{position:absolute;top:-6px;width:6px;height:42px;border-radius:3px;background:var(--ink);transition:left .3s cubic-bezier(.2,.8,.3,1)}
+.scale .tk{position:absolute;top:34px;font-size:11px;font-weight:800;color:var(--ink-2);transform:translateX(-50%)}
+.rub{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:2px solid #F0F5F7;flex-wrap:wrap}
+.dots{display:flex;gap:5px}
+.dot{width:29px;height:29px;border-radius:10px;border:3px solid var(--line);background:var(--paper);cursor:pointer;font-family:inherit;font-weight:900;font-size:12px;color:var(--ink-2);transition:transform .13s}
+.dot:hover{transform:scale(1.12)}
+.dot[aria-pressed=true]{background:var(--slate);border-color:var(--slate-d);color:#fff}
+.box{border-radius:16px;padding:14px;border:3px solid var(--line)}
+.box.good{background:#F3FBF2;border-color:#CFEBCB}
+.box.warn{background:#FFF8EE;border-color:#FFE0B8}
+.box.bad{background:#FFF1F1;border-color:#FFD5D5}
+.box.plain{background:var(--wash)}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;font-weight:700;padding:7px 0;border-bottom:2px solid #F0F5F7}
+.kv:last-child{border-bottom:none}
+.tagrow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.tline{display:flex;gap:10px;padding:10px 0;border-top:2px solid #F0F5F7;flex-wrap:wrap;align-items:flex-start}
+.tstamp{font-size:12px;font-weight:900;color:var(--ink-2);flex:none;width:46px;padding-top:2px}
+.faq{background:var(--paper);border:3px solid var(--line);border-radius:18px;margin-bottom:10px;overflow:hidden;box-shadow:0 4px 0 var(--line)}
+.faqq{width:100%;text-align:left;font-family:inherit;font-weight:800;font-size:15px;color:var(--ink);background:none;border:none;padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.faqq:hover{background:var(--wash)}
+.faqi{font-size:20px;font-weight:900;color:var(--downy-d);transition:transform .2s;flex:none}
+.faq[data-open=true] .faqi{transform:rotate(45deg)}
+.faqa{padding:0 18px 16px;font-size:14px;font-weight:700;color:var(--ink-2)}
+.stickycta{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);border-top:3px solid var(--downy);padding:11px 16px;display:flex;gap:11px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 -6px 20px rgba(47,72,88,.08)}
+.stickycta b{font-size:14px}
+@media(max-width:560px){.stickycta b{display:none}}
+#toasts{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:420px}
+.toast{background:var(--ink);color:#fff;font-weight:800;font-size:13.5px;padding:12px 18px;border-radius:14px;box-shadow:0 8px 22px rgba(47,72,88,.3);animation:toastIn .3s cubic-bezier(.2,.9,.3,1.3) both}
+.toast.g{background:var(--green-d)}.toast.r{background:var(--mona-d)}.toast.p{background:var(--amethyst-d)}
+@keyframes toastIn{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+footer{text-align:center;font-size:12px;color:var(--ink-2);font-weight:700;margin-top:36px}
+@media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="blobs" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div id="toasts" aria-live="polite"></div>
+
+<div class="wrap">
+
+<div class="hdr">
+  <div class="mark" id="logo" role="button" tabindex="0"><b>ENGFLIGHT</b><span>Applied English Incubation</span></div>
+  <div class="nav" role="tablist" id="navPublic">
+    <button class="tab" role="tab" aria-selected="true" data-p="home">Home</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="how">How it works</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="tools">Try it free</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="alum">Alumni results</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="city">Find your city</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="faq">Questions</button>
+  </div>
+  <div class="nav" role="tablist" id="navApp" hidden>
+    <button class="tab" role="tab" aria-selected="true" data-p="a0">Dashboard</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a1">Assess</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a2">Train</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a3">Build</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a4">Connect</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a5">Verify</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="a6">Mentoring</button>
+  </div>
+  <button class="btn b-slate b-sm" id="modeBtn">Enter the platform</button>
+</div>
+
+<!-- ============ HOME ============ -->
+<section class="panel pub" id="home">
+  <div class="hero">
+    <svg class="hshape" width="300" height="300" viewBox="0 0 300 300" aria-hidden="true"><circle cx="180" cy="90" r="70" fill="#6ED1CF" opacity=".35"/><circle cx="240" cy="180" r="46" fill="#FB96BB" opacity=".4"/><rect x="90" y="150" width="80" height="80" rx="26" fill="#FFB356" opacity=".35" transform="rotate(-14 130 190)"/></svg>
+    <span class="sticker">free · funded by the national vocational programme</span>
+    <h1 style="margin-top:16px">Your English is good enough. The way you price it isn't.</h1>
+    <p class="lede">You can read the brief, answer the email, and deliver the work. But the moment a client says “that's a bit above our budget,” the price drops. ENGFLIGHT trains exactly that — twelve weeks, ending at your first paid international contract.</p>
+    <div class="ctarow">
+      <button class="btn b-green big" data-go="city">Find a cohort near me</button>
+      <button class="btn ghost big" data-go="tools">Try the tools first, free</button>
+    </div>
+    <div class="trustrow">
+      <span><i class="tick">✓</i>No certification fees</span>
+      <span><i class="tick">✓</i>Transport allowance included</span>
+      <span><i class="tick">✓</i>Mentors are working freelancers</span>
+      <span><i class="tick">✓</i>Hosted at your local training centre</span>
+    </div>
+  </div>
+
+  <div class="grid g4 sp28 stagger">
+    <div class="stat s1"><div class="n" data-count="1847">0</div><div class="l">Verified first international contracts</div></div>
+    <div class="stat s2"><div class="n" data-count="24">0</div><div class="l">Cities with an active Hangar</div></div>
+    <div class="stat s3"><div class="n" data-count="412" data-pre="$">0</div><div class="l">Median value of an alumni's first contract</div></div>
+    <div class="stat s4"><div class="n" data-count="0" data-pre="Rp">0</div><div class="l">What it costs you</div></div>
+  </div>
+
+  <div class="sechead"><div class="eyebrow">What's actually happening</div><h2>Your proposal isn't losing on grammar</h2><p>These three patterns show up in almost every proposal written by an Indonesian freelancer. All of them are grammatically correct. All of them lower the price.</p></div>
+  <div class="grid g3 stagger">
+    <div class="card lift"><span class="sticker" style="background:var(--mona);box-shadow:0 4px 0 var(--mona-d)">pattern 1</span>
+      <h4 style="margin-top:13px">Too many softeners</h4>
+      <p class="sub sp8">“Maybe I can probably finish in about two weeks or so.” You meant to be polite. What the client hears is <b>this person isn't sure they can do it</b>. Then the price gets pushed down.</p></div>
+    <div class="card lift"><span class="sticker" style="background:var(--mona);box-shadow:0 4px 0 var(--mona-d)">pattern 2</span>
+      <h4 style="margin-top:13px">Discounting before you're asked</h4>
+      <p class="sub sp8">“My rate is $80, but if that is too much I can lower it.” Nobody negotiated yet and you already moved. The client reads it as <b>an admission that your first number was inflated</b>.</p></div>
+    <div class="card lift"><span class="sticker" style="background:var(--mona);box-shadow:0 4px 0 var(--mona-d)">pattern 3</span>
+      <h4 style="margin-top:13px">“I will try”</h4>
+      <p class="sub sp8">You meant it as a polite no. The client heard <b>yes</b>. The unpaid work that follows isn't generosity — it's a translation error with an invoice attached.</p></div>
+  </div>
+
+  <div class="sechead"><div class="eyebrow">Proof</div><h2>Same person, same client, eleven weeks apart</h2><p>Rani, a copywriter in Malang. Nothing about her skill changed. Only the language around the price did.</p></div>
+  <div class="grid g2">
+    <div class="card" style="background:#FFF1F1;border-color:#FFD5D5;box-shadow:0 5px 0 #FFD5D5">
+      <span class="pill p-mona">week 1</span>
+      <p class="sp8" style="font-size:14.5px">“Hi, sorry to bother you. I am just a copywriter from Indonesia and I think I can probably help. I am quite flexible, so I will try to do anything you need.”</p>
+      <div style="font-size:34px;font-weight:900;color:#C24F4F;letter-spacing:-1.5px;margin-top:10px">$80</div></div>
+    <div class="card" style="background:#F3FBF2;border-color:#CFEBCB;box-shadow:0 5px 0 #CFEBCB">
+      <span class="pill p-green">week 12</span>
+      <p class="sp8" style="font-size:14.5px">“I write onboarding sequences for B2B software teams. For your five emails: a rewrite based on three user interviews, two revision rounds, delivered in ten working days. The fee is $480.”</p>
+      <div style="font-size:34px;font-weight:900;color:#3E8A35;letter-spacing:-1.5px;margin-top:10px">$480 <span class="arrowup">↑ 6×</span></div></div>
+  </div>
+  <div class="center sp"><button class="btn b-sky big" data-go="tools">Check your own proposal now</button></div>
+</section>
+
+<!-- ============ HOW ============ -->
+<section class="panel pub" id="how" hidden>
+  <div class="sechead"><div class="eyebrow">Twelve weeks</div><h2>From never having had a foreign client to your first paid contract</h2><p>All of it at your local training centre, twice a week, alongside your studies or your job.</p></div>
+  <div class="steps stagger" id="steps"></div>
+
+  <div class="sechead"><div class="eyebrow">What makes it different</div><h2>You don't learn alone, and you don't negotiate alone</h2></div>
+  <div class="grid g2">
+    <div class="card lift"><h3>A crew of six to eight</h3>
+      <p class="sub sp8">One city, one skill cluster, deliberately matched so you cover each other. Whoever is weak at negotiating sits next to whoever is strong at it.</p>
+      <div class="box good sp"><b>The rule:</b> you can't send your own proposal this week until you've reviewed two belonging to your crew. Mutual aid here is a system rule, not a request.</div></div>
+    <div class="card lift"><h3>Your mentor is a working freelancer</h3>
+      <p class="sub sp8">Not a lecturer. Someone who is pitching foreign clients this week too. In weeks 4 to 7 you work on their live client projects and take a share of the fee.</p>
+      <div class="box warn sp"><b>Shadow Call:</b> you sit in on a real client call. You listen first, then you're handed one part of the conversation to run yourself.</div></div>
+  </div>
+
+  <div class="sechead"><div class="eyebrow">Cost</div><h2>Free — and you receive a transport allowance</h2></div>
+  <div class="card tint">
+    <div class="grid g2">
+      <div><h4>What you receive</h4>
+        <div class="row"><span class="chk">✓</span><div>Twelve weeks of training at no cost</div></div>
+        <div class="row"><span class="chk">✓</span><div>A transport allowance, paid up front</div></div>
+        <div class="row"><span class="chk">✓</span><div>Work accident and life insurance during the programme</div></div>
+        <div class="row"><span class="chk">✓</span><div>A digital credential showing verified earnings</div></div></div>
+      <div><h4>What you give</h4>
+        <div class="row"><span class="chk" style="background:var(--amethyst)">1</span><div>Two sessions a week for twelve weeks</div></div>
+        <div class="row"><span class="chk" style="background:var(--amethyst)">2</span><div>Reviewing two crew proposals every week</div></div>
+        <div class="row"><span class="chk" style="background:var(--amethyst)">3</span><div>Supporting one following cohort after you graduate</div></div>
+        <div class="box plain sp8"><b>No cut of your earnings.</b> Every contract you win is entirely yours.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOOLS ============ -->
+<section class="panel pub" id="tools" hidden>
+  <div class="sechead"><div class="eyebrow">No signup, no email</div><h2>Try three of our tools right now</h2><p>These are parts of the platform we've opened to everyone. If they help, then go find a cohort.</p></div>
+  <div class="tagrow">
+    <button class="btn ghost" data-tool="tl1" aria-pressed="true">Check your proposal</button>
+    <button class="btn ghost" data-tool="tl2" aria-pressed="false">Hold your rate</button>
+    <button class="btn ghost" data-tool="tl3" aria-pressed="false">Decode a client call</button>
+  </div>
+
+  <div class="sheet" id="tl1"><div class="grid side">
+    <div class="card"><h3>Paste your proposal here</h3>
+      <p class="sub">Softeners highlight in orange, unbounded commitments in red. Nothing is sent anywhere.</p>
+      <div class="tagrow sp" id="verTabs"></div>
+      <div class="edwrap"><div class="mirror" id="mirror" aria-hidden="true"></div>
+        <textarea id="ed" spellcheck="false" aria-label="Your proposal"></textarea></div>
+      <div class="legend sp8"><span><i class="sw" style="background:#FFE0B8"></i>Softeners</span><span><i class="sw" style="background:#FFD5D5"></i>Unbounded commitments</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tint"><h3>Confidence score</h3><p class="sub">Softeners per 100 words. Safe range: 0–6.</p>
+        <div class="readout sp8" id="dens">0.0</div><div class="meter"><i id="bar"></i></div>
+        <div class="sub" id="verdict"></div><ul class="flaglist" id="flags"></ul></div>
+      <div class="card lift"><h3>Where your price sits globally</h3>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:9px">
+          <input type="range" id="price" min="40" max="900" step="10" value="80" aria-label="Project fee" style="flex:1;min-width:140px">
+          <b style="font-size:23px;font-weight:900" id="priceOut">$80</b></div>
+        <div class="scale"><span class="pin" id="pin"></span><span class="tk" style="left:8%">Below cost</span><span class="tk" style="left:45%">Asian band</span><span class="tk" style="left:84%">Global band</span></div>
+        <p class="sub" id="rateNote" style="margin-top:32px"></p></div>
+    </div></div></div>
+
+  <div class="sheet" id="tl2" hidden><div class="grid side">
+    <div class="card"><h3>The client pushes back three times. Can you hold?</h3>
+      <p class="sub">What's measured isn't your grammar. It's whether you concede.</p>
+      <div class="sp" id="drill"></div></div>
+    <div class="card tint"><h3>Rate still standing</h3>
+      <div class="readout sp8" id="finalRate" style="color:var(--green-d)">$480</div>
+      <div class="sp8" id="log"></div>
+      <button class="btn b-purple sp" id="resetDrill">Start again</button></div></div></div>
+
+  <div class="sheet" id="tl3" hidden><div class="card">
+    <h3>Listen to a client call, then take it apart</h3>
+    <p class="sub">A proficiency test measures whether you understood. This measures whether you caught the thing that will cost you money.</p>
+    <div class="box plain sp"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn b-slate b-sm" id="playBrief">▶ Play recording · 3:12</button>
+      <span class="sub">Dutch client · agritech · Utrecht</span></div>
+      <div class="sub sp8" id="playNote">The transcript appears after you play the recording.</div></div>
+    <div id="bdBody" hidden>
+      <p class="sub sp">Tag each line. One category per line.</p>
+      <div id="bdList" class="sp8"></div>
+      <button class="btn b-sky sp" id="bdCheck">Check my reading</button><div class="sp8" id="bdOut"></div></div></div></div>
+</section>
+
+<!-- ============ ALUMNI ============ -->
+<section class="panel pub" id="alum" hidden>
+  <div class="sechead"><div class="eyebrow">Alumni results</div><h2>Before and after numbers, not polished testimonials</h2><p>Every contract value below is pulled automatically from their freelance accounts, not self-reported.</p></div>
+  <div class="tagrow" id="alumFilter"></div>
+  <div class="grid g3 stagger" id="alumList"></div>
+  <div class="card tint sp28 center">
+    <h3>Nobody here is guaranteed to succeed</h3>
+    <p class="sub sp8" style="max-width:62ch;margin:9px auto 0">Roughly four in every ten participants land a first contract within the cycle. We publish that figure as it is, because a programme promising a hundred per cent usually isn't counting.</p>
+    <button class="btn b-green big sp" data-go="city">See cohorts near me</button>
+  </div>
+</section>
+
+<!-- ============ CITY ============ -->
+<section class="panel pub" id="city" hidden>
+  <div class="sechead"><div class="eyebrow">24 cities</div><h2>Find your nearest Hangar</h2><p>A Hangar is a community training centre used as a crew's home base. If your city isn't listed yet, you can join the online Hangar Club first.</p></div>
+  <div class="grid g2">
+    <div class="card">
+      <label class="f">Your city</label>
+      <select id="citySel"></select>
+      <label class="f">Your skill</label>
+      <select id="skillSel"><option>Copywriting</option><option>Graphic design</option><option>Video editing</option><option>Web development</option><option>Not sure yet</option></select>
+      <button class="btn b-green sp" id="cityGo">Check availability</button>
+      <div class="sp" id="cityOut"></div>
+    </div>
+    <div class="card tint">
+      <h3>Check your readiness, 30 seconds</h3>
+      <p class="sub">Three questions. The result decides which client market suits you right now — it doesn't reject you.</p>
+      <div class="sp" id="quiz"></div>
+      <div class="sp8" id="quizOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="panel pub" id="faq" hidden>
+  <div class="sechead"><div class="eyebrow">Questions</div><h2>What people ask most</h2></div>
+  <div id="faqList"></div>
+  <div class="card tint sp28 center">
+    <h3>Still unsure?</h3>
+    <p class="sub sp8">Just come to the monthly Open Hangar in your city. Anyone can attend, no registration, no cost.</p>
+    <button class="btn b-sky big sp" data-go="city">See the schedule near me</button>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<section class="panel app" id="a0" hidden>
+  <div class="sechead"><div class="eyebrow">Week 9 of 12</div><h2>Hello, Rani</h2><p>Solo flight phase. Cycle target: one verified international contract.</p></div>
+  <div class="grid g4 stagger">
+    <div class="stat s1"><div class="n" data-count="1240" data-pre="$">0</div><div class="l">Verified earnings</div></div>
+    <div class="stat s2"><div class="n" data-count="3">0</div><div class="l">Contracts completed</div></div>
+    <div class="stat s3"><div class="n" id="hCredit">0/2</div><div class="l">Review credit this week</div></div>
+    <div class="stat s4"><div class="n" id="hHedge">3.2</div><div class="l">Softener density</div></div>
+  </div>
+  <div class="grid side sp28">
+    <div class="card lift"><h3>Your journey</h3><div class="sp8" id="timeline"></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tint"><h3>Four skills, four places</h3><div class="sp8" id="skills"></div></div>
+      <div class="card lift"><h3>Crew activity</h3><div class="sp8" id="feed"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel app" id="a1" hidden>
+  <div class="sechead"><div class="eyebrow">Module 1</div><h2>Assess · English is measured</h2><p>Four tasks taken from real job postings, not multiple choice</p></div>
+  <div class="grid g2">
+    <div class="card"><h3>Live Posting Diagnostic</h3>
+      <div class="box plain sp8"><h4>Real posting, Dutch client</h4>
+        <p class="sub" style="color:var(--ink)">“Need a copywriter for our onboarding emails. We have 5 emails, currently low engagement. Would also be great if you could look at our pricing page. Budget flexible for the right person.”</p></div>
+      <p class="sub sp">Mark what is <b>inside scope</b> and what must be <b>quoted separately</b>.</p>
+      <div id="scopeTask" class="sp8"></div>
+      <button class="btn b-sky sp" id="scopeCheck">Check my answers</button><div id="scopeRes" class="sp8"></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card lift"><h3>Functional English Profile</h3><div class="sp8" id="bars"></div>
+        <div class="box bad sp8"><b>Weakest: spoken persuasion (54).</b> In line with the national pattern — speaking 447, below reading 491 and writing 479.</div></div>
+      <div class="card lift"><h3>Market Readiness Band</h3><p class="sub">You're routed to the market whose register already fits you, not blocked until you're fluent.</p><div class="sp8" id="bands"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel app" id="a2" hidden>
+  <div class="sechead"><div class="eyebrow">Module 2</div><h2>Train · English is drilled</h2><p>No lesson videos. Every piece of material comes from a real transaction.</p></div>
+  <div class="tagrow">
+    <button class="btn ghost b-sm" data-tr="t1" aria-pressed="true">Pragmatic Transfer</button>
+    <button class="btn ghost b-sm" data-tr="t2" aria-pressed="false">Register Switcher</button>
+    <button class="btn ghost b-sm" data-tr="t4" aria-pressed="false">Repair Drill</button>
+    <button class="btn ghost b-sm" data-tr="t6" aria-pressed="false">Call Teardown</button>
+  </div>
+  <div class="sheet" id="t1"><div class="card"><h3>Pragmatic Transfer Corrector</h3>
+    <p class="sub">Your sentence is correct. Its social calibration isn't. Click one to see why.</p>
+    <div class="sp" id="ptList"></div><div class="sp8" id="ptOut"></div></div></div>
+  <div class="sheet" id="t2" hidden><div class="card"><h3>Register Switcher</h3>
+    <p class="sub">The same offer, three different markets.</p>
+    <div class="tagrow sp">
+      <button class="btn ghost b-sm" data-reg="us" aria-pressed="true">US client</button>
+      <button class="btn ghost b-sm" data-reg="de" aria-pressed="false">German client</button>
+      <button class="btn ghost b-sm" data-reg="jp" aria-pressed="false">Japanese client</button></div>
+    <div id="regOut"></div></div></div>
+  <div class="sheet" id="t4" hidden><div class="card"><h3>Repair Drill</h3>
+    <p class="sub">Most money is lost not while negotiating, but when the relationship cracks.</p>
+    <div class="tagrow sp" id="repTabs"></div><div id="repBody"></div></div></div>
+  <div class="sheet" id="t6" hidden><div class="card"><h3>Call Teardown Library</h3>
+    <p class="sub">Real negotiation recordings from mentors and alumni, used with client permission, annotated at the second the price was decided.</p>
+    <div class="tagrow sp" id="ctTabs"></div><div id="ctBody"></div></div></div>
+</section>
+
+<section class="panel app" id="a3" hidden>
+  <div class="sechead"><div class="eyebrow">Module 3</div><h2>Build · English is produced</h2><p>Every version is kept. The sequence of versions is the record of your progress.</p></div>
+  <div class="grid side">
+    <div class="card"><h3>Verified Case File Builder</h3>
+      <p class="sub">A portfolio written as case studies, not an image gallery.</p>
+      <label class="f">Project title</label><input type="text" id="cfTitle" value="Retail catalogue product descriptions">
+      <label class="f">Problem</label><input type="text" id="cfProb" value="Product pages did not explain the difference between variants.">
+      <label class="f">Agreed scope</label><input type="text" id="cfScope" value="48 product descriptions, two revision rounds, delivered in 14 days.">
+      <label class="f">Measurable result <span class="pill p-mona">required</span></label><input type="text" id="cfRes" placeholder="A portfolio without numbers is a portfolio that says nothing.">
+      <label class="f">Link to a Logbook entry</label>
+      <select id="cfLink"><option value="">Not linked</option><option value="1">14 Feb · Singapore · $140</option><option value="2">28 Feb · Germany · $480</option></select>
+      <button class="btn b-green sp" id="cfPub" disabled>Publish case file</button>
+      <p class="sub sp8" id="cfNote"></p></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tint"><h3>Live preview</h3><div id="cfPrev" class="sp8"></div></div>
+      <div class="card lift"><h3>Submission gate</h3>
+        <div class="row"><span class="chk" id="c1" style="background:var(--rose)">•</span><div>Review credit: <b id="credit">0 of 2</b></div></div>
+        <div class="row"><span class="chk" id="c2" style="background:var(--rose)">•</span><div>Mentor approval: <b id="mstate">not requested</b></div></div>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn b-sky b-sm" id="askMentor" disabled>Request mentor approval</button>
+          <button class="btn b-green b-sm" id="send" disabled>Send to client</button></div>
+        <p class="sub" id="sendNote" style="margin-top:9px">Complete two reviews in Connect to unlock this gate.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel app" id="a4" hidden>
+  <div class="sechead"><div class="eyebrow">Module 4</div><h2>Connect · English is corrected</h2><p>Mutual aid as a system rule, not a request</p></div>
+  <div class="grid side">
+    <div class="card"><h3>Peer Correction Rubric</h3><p class="sub">You can't write “looks good”. All four dimensions are required.</p>
+      <div class="box plain sp"><h4 id="revWho"></h4><p class="sub" id="revText" style="color:var(--ink)"></p></div>
+      <div id="rubric" class="sp8"></div>
+      <label class="f">Required note — name one sentence to change and why</label>
+      <input type="text" id="revNote" placeholder="At least 20 characters">
+      <button class="btn b-slate sp" id="revSubmit" disabled>Submit review</button>
+      <p class="sub sp8" id="revState">Reviews submitted: 0 of 2.</p></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card tint"><h3>Three community layers</h3><div class="sp8" id="layers"></div></div>
+      <div class="card lift"><h3>Crew Malang-03</h3><div class="sp8" id="crew"></div>
+        <div class="box good sp8"><b>Language partner:</b> Dimas. Your weakest dimension is his strongest.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel app" id="a5" hidden>
+  <div class="sechead"><div class="eyebrow">Module 5</div><h2>Verify · English is priced</h2><p>Evidence is pulled by machine, not self-reported</p></div>
+  <div class="grid g2">
+    <div class="card lift"><h3>Logbook</h3><p class="sub">Read-only access. Only contract value, client country and date are taken.</p>
+      <div class="sp8"><div class="kv"><span>Upwork</span><span class="pill p-green">connected</span></div>
+        <div class="kv"><span>Payoneer</span><span class="pill p-green">connected</span></div>
+        <div class="kv"><span>Contents of your work</span><span class="pill p-grey">never accessed</span></div></div>
+      <div class="sp8">
+        <div class="row"><span class="chk">✓</span><div style="flex:1"><b>Brand copy, 4 pages</b><div class="sub">Australia · 12 Mar</div></div><b>$620</b></div>
+        <div class="row"><span class="chk">✓</span><div style="flex:1"><b>Newsletter series</b><div class="sub">Germany · 28 Feb</div></div><b>$480</b></div>
+        <div class="row"><span class="chk">✓</span><div style="flex:1"><b>Product descriptions</b><div class="sub">Singapore · 14 Feb</div></div><b>$140</b></div></div></div>
+    <div class="card lift"><h3>Conversion Corpus</h3><p class="sub">Each proposal's language features linked to the outcome and price it produced.</p>
+      <div class="grid g2 sp8"><select id="kkMarket"><option>Germany</option><option>United States</option><option>Australia</option></select>
+        <select id="kkSkill"><option>Copywriting</option><option>Graphic design</option><option>Video editing</option></select></div>
+      <div id="kkOut" class="sp8"></div></div>
+  </div>
+  <div class="card sp"><h3>Your digital credential</h3>
+    <div class="box good sp8"><div style="display:flex;gap:13px;align-items:flex-start;flex-wrap:wrap">
+      <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true" style="flex:none"><rect width="76" height="76" rx="16" fill="#fff" stroke="#CFEBCB" stroke-width="3"/><g fill="#2F4858"><rect x="13" y="13" width="14" height="14" rx="2"/><rect x="49" y="13" width="14" height="14" rx="2"/><rect x="13" y="49" width="14" height="14" rx="2"/><rect x="33" y="33" width="8" height="8" rx="1"/><rect x="49" y="41" width="8" height="8" rx="1"/><rect x="41" y="57" width="8" height="8" rx="1"/><rect x="57" y="57" width="6" height="6" rx="1"/></g></svg>
+      <div style="flex:1;min-width:200px"><h4>Rani Ardiyanti · ENGFLIGHT Cadet</h4>
+        <p class="sub" style="color:var(--ink)">Negotiated and held a rate with three clients across three jurisdictions. Total verified contract value $1,240.</p>
+        <p class="sub">Third-party checkable without login · VC-8841-MLG</p></div></div></div>
+    <div class="box bad sp8"><b>What this credential does not contain:</b> a test score, a number of study hours, or a course title. None of those can be spent.</div></div>
+</section>
+
+<section class="panel app" id="a6" hidden>
+  <div class="sechead"><div class="eyebrow">Supporting module</div><h2>Mentoring · five formats</h2><p>Your mentor is a working freelancer with foreign clients, not a teacher</p></div>
+  <div class="grid side">
+    <div class="card"><h3>Your week with Captain Naufal</h3><div class="sp8" id="msList"></div><div class="sp8" id="msOut"></div></div>
+    <div class="card tint"><h3>Mentor workload per week</h3>
+      <div class="sp8">
+        <div class="kv"><span>Crew Clinic</span><b>1.5 hours</b></div>
+        <div class="kv"><span>Sign-off on ~8 proposals</span><b>1.3 hours</b></div>
+        <div class="kv"><span>One-to-one debriefs</span><b>1.0 hour</b></div>
+        <div class="kv"><span>Shadow Call</span><b style="color:#3E8A35">0 additional hours</b></div>
+        <div class="kv" style="border-top:3px solid var(--downy);padding-top:9px"><span><b>Total</b></span><b>about 4 hours</b></div></div>
+      <div class="box good sp8"><b>Shadow Call costs no extra time.</b> It's the mentor's own client call; the cadet simply listens in. The most valuable form of mentoring is also the cheapest.</div></div>
+  </div>
+</section>
+
+<footer>ENGFLIGHT · prototype · all figures shown are illustrative</footer>
+</div>
+
+<div class="stickycta pub" id="sticky"><b>Next cohort opens in March</b><button class="btn b-green" data-go="city">Find a cohort near me</button><button class="btn ghost b-sm" data-go="tools">Try it free</button></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)},$$=function(s){return [].slice.call(document.querySelectorAll(s))};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function toast(m,k){var t=document.createElement('div');t.className='toast'+(k?' '+k:'');t.textContent=m;$('#toasts').appendChild(t);
+ setTimeout(function(){t.style.transition='opacity .3s,transform .3s';t.style.opacity='0';t.style.transform='translateY(10px)';setTimeout(function(){t.remove();},320);},2600);}
+function countUp(el){var tg=+el.dataset.count,pre=el.dataset.pre||'',post=el.dataset.post||'';
+ if(RM||tg===0){el.textContent=pre+tg.toLocaleString('en-US')+post;return;}
+ var t0=null;function f(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/900,1),e=1-Math.pow(1-p,3);
+  el.textContent=pre+Math.round(tg*e).toLocaleString('en-US')+post;if(p<1)requestAnimationFrame(f);}requestAnimationFrame(f);}
+function runCounters(sc){$$(sc+' [data-count]').forEach(function(el){if(!el.dataset.done){el.dataset.done='1';countUp(el);}});}
+function group(a){$$('[data-'+a+']').forEach(function(b){b.addEventListener('click',function(){
+ $$('[data-'+a+']').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');
+  var el=document.getElementById(x.dataset[a]);if(el)el.hidden=(x!==b);});});});}
+
+var appMode=false;
+function show(id,navSel){
+ $$(navSel+' .tab').forEach(function(x){x.setAttribute('aria-selected',x.dataset.p===id?'true':'false');
+  document.getElementById(x.dataset.p).hidden=(x.dataset.p!==id);});
+ runCounters('#'+id);window.scrollTo({top:0,behavior:RM?'auto':'smooth'});}
+$$('#navPublic .tab').forEach(function(t){t.addEventListener('click',function(){show(t.dataset.p,'#navPublic');});});
+$$('#navApp .tab').forEach(function(t){t.addEventListener('click',function(){show(t.dataset.p,'#navApp');});});
+$$('[data-go]').forEach(function(b){b.addEventListener('click',function(){if(appMode)setMode(false);show(b.dataset.go,'#navPublic');});});
+function setMode(app){appMode=app;
+ $('#navPublic').hidden=app;$('#navApp').hidden=!app;
+ $$('.panel.pub').forEach(function(p){p.hidden=true;});$$('.panel.app').forEach(function(p){p.hidden=true;});
+ $('#sticky').hidden=app;
+ $('#modeBtn').textContent=app?'Back to the site':'Enter the platform';
+ $('#modeBtn').className='btn b-sm '+(app?'ghost':'b-slate');
+ show(app?'a0':'home',app?'#navApp':'#navPublic');
+ if(app)toast('Signed in as Rani · Crew Malang-03','p');}
+$('#modeBtn').addEventListener('click',function(){setMode(!appMode);});
+$('#logo').addEventListener('click',function(){if(appMode)setMode(false);else show('home','#navPublic');});
+$('#logo').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();this.click();}});
+group('tool');group('tr');
+
+var STEPS=[["Week 0","An intake of four real tasks, not multiple choice. Your transport allowance is paid straight away.","var(--sky)"],
+["Weeks 1–3","Learn the language of the deal: setting scope, naming a price, saying no without damaging the relationship.","var(--amethyst)"],
+["Weeks 4–7","Work on your mentor's live client projects. You take a share of the fee, and your portfolio starts filling up.","var(--rose)"],
+["Weeks 8–12","Bid on your own, with proposals reviewed by your crew and approved by your mentor, until the first contract lands.","var(--green)"]];
+$('#steps').innerHTML=STEPS.map(function(s,i){return '<div class="step"><div class="stepn" style="background:'+s[2]+'">'+(i+1)+'</div><h4>'+s[0]+'</h4><p class="sub sp8">'+s[1]+'</p></div>';}).join('');
+
+var HEDGES=["sorry to bother you","sorry to disturb","i think i can probably","i think","i believe","i guess","i am just","i'm just","just a","maybe","perhaps","possibly","probably","hopefully","hope","quite","rather","a bit","a little","kind of","sort of","somewhat","if possible","if that is too much","if it is okay","i will try","i would like to","wondering","not sure","or so","about","might","could possibly","flexible"];
+var SCOPEW=["anything you need","anything","everything","unlimited revisions","unlimited","whatever you want","whatever","as needed","as many as you want","no problem at all","any changes you want"];
+function rx(l){var p=l.slice().sort(function(a,b){return b.length-a.length;}).map(function(w){return w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');});return new RegExp("\\b("+p.join("|")+")\\b","gi");}
+var RH=rx(HEDGES),RS=rx(SCOPEW);
+var VERS=[{n:"Sample: beginner proposal",t:"Hi, sorry to bother you. I am just a copywriter from Indonesia and I think I can probably help with your onboarding emails. Maybe I can finish in about two weeks or so. I am quite flexible, so I will try to do anything you need and unlimited revisions are fine. My rate is $80 but if that is too much I can lower it. Hopefully we can work together."},
+{n:"Sample: after twelve weeks",t:"Hi Sarah. I write onboarding sequences for B2B software teams, most recently for a Dutch agritech client whose third-email open rate moved from 19% to 34%. For your five emails I propose a rewrite based on three user interviews, two revision rounds, and delivery in ten working days. The fee is $480, with 50% on start. Further revision rounds are quoted at $60 each."},
+{n:"Clear it",t:""}];
+$('#verTabs').innerHTML=VERS.map(function(v,i){return '<button class="btn ghost b-sm" data-vs="'+i+'" aria-pressed="'+(i===0)+'">'+v.n+'</button>';}).join('');
+var ed=$('#ed'),mirror=$('#mirror'),lastBand=null;
+function analyse(){var text=ed.value,words=(text.trim().match(/\S+/g)||[]).length;
+ var hits=text.match(RH)||[],sh=text.match(RS)||[],d=words?(hits.length/words*100):0;
+ var html=esc(text).replace(RS,function(m){return '<mark class="s">'+m+'</mark>';});
+ html=html.replace(RH,function(m){return m.indexOf('<')>-1?m:'<mark class="h">'+m+'</mark>';});
+ mirror.innerHTML=html+'<br>';
+ $('#dens').textContent=d.toFixed(1);
+ var hh=$('#hHedge');if(hh)hh.textContent=d.toFixed(1);
+ var band=d<=6?'ok':(d<=9?'mid':'bad');
+ $('#bar').style.width=Math.min(d/15*100,100)+'%';
+ $('#bar').style.background=band==='ok'?'var(--green)':(band==='mid'?'var(--rose)':'var(--mona)');
+ $('#dens').style.color=band==='ok'?'var(--green-d)':(band==='mid'?'var(--rose-d)':'var(--mona-d)');
+ if(lastBand&&lastBand!=='ok'&&band==='ok'&&words)toast('That reads as confident now','g');
+ lastBand=words?band:null;
+ $('#verdict').innerHTML=!words?'Paste a proposal to see the result.':band==='ok'?'This reads as confident. That is what gets paid well.':band==='mid'?'Still hedging. Rates in this band are typically pushed down <b>15–25%</b>.':'Heavily hedged. The client reads this as <b>uncertainty</b>, not politeness.';
+ var it=[];
+ if(hits.length)it.push('<li><b>'+hits.length+' softeners</b>: '+esc(hits.slice(0,6).join(', '))+(hits.length>6?'…':'')+'</li>');
+ if(sh.length)it.push('<li class="scope"><b>Unbounded commitment:</b> '+esc(sh.join(', '))+'. This is where unpaid work is born.</li>');
+ if(/\bif that is too much\b|\bi can lower it\b/i.test(text))it.push('<li class="scope"><b>You discounted before anyone negotiated.</b></li>');
+ if(!/\$|\bfee\b|\brate\b/i.test(text)&&words>25)it.push('<li><b>No number anywhere.</b> A proposal without a price hands the client full control.</li>');
+ if(!it.length&&words)it.push('<li class="ok">Clean. Nothing here is pulling your price down.</li>');
+ $('#flags').innerHTML=it.join('');}
+ed.addEventListener('input',analyse);ed.addEventListener('scroll',function(){mirror.scrollTop=ed.scrollTop;});
+$$('[data-vs]').forEach(function(b){b.addEventListener('click',function(){$$('[data-vs]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});ed.value=VERS[+b.dataset.vs].t;analyse();ed.focus();});});
+ed.value=VERS[0].t;analyse();
+var price=$('#price');
+function rate(){var v=+price.value;$('#priceOut').textContent='$'+v;$('#pin').style.left=Math.min((v-40)/860*100,99)+'%';
+ $('#rateNote').innerHTML=v<150?'Below the cost of your own working hours. Alumni with a comparable portfolio take <b>$420–$680</b> for this scope.':v<380?'Still in the Southeast Asian band. European clients pay <b>two to three times</b> this for identical work.':'Level with the global band. Nine alumni closed contracts in this range over the last six months.';}
+price.addEventListener('input',rate);rate();
+
+var ROUNDS=[{c:"Thanks for the proposal. Honestly, $480 is above what we planned. Can you do $300?",
+a:[{t:"Sure, $300 works for me. No problem at all.",d:-180,n:"Conceded on the first push. The client will now push again."},
+{t:"I can do $300 if we drop to one revision round and remove source files.",d:-180,n:"Price came down but so did scope. That's a trade, not a loss."},
+{t:"$480 covers three directions and two revision rounds. Which would you like me to remove?",d:0,n:"Rate holds. The choice is handed back to the client."}]},
+{c:"Our other quote came in at $280. Why are you more expensive?",
+a:[{t:"Sorry, maybe I am too expensive. I can match $280.",d:-200,n:"Apologising for your own price."},
+{t:"Different scope, probably. I think mine might include more.",d:-60,n:"Vague and full of softeners. No reason given to pay more."},
+{t:"That quote likely covers one direction. Mine covers three plus a rationale document you can reuse.",d:0,n:"Explains value instead of defending price."}]},
+{c:"Fine. But we might need extra revisions later. That's included, right?",
+a:[{t:"Yes of course, unlimited revisions, whatever you need.",d:-140,n:"Unbounded commitment. This is where unpaid work is born."},
+{t:"I will try to be flexible about that.",d:-90,n:"The client hears yes."},
+{t:"Two rounds are included. Further rounds are $60 each, quoted before I start them.",d:0,n:"Fence built in advance, tone still warm."}]}];
+var step=0,cur=480;
+function renderDrill(){var dl=$('#drill');
+ if(step>=ROUNDS.length){dl.innerHTML='<div class="bubble">Done. Three pushbacks survived.</div><p class="sub">In the real cohort this is drilled by voice — the system counts your response delay and how often you say “umm”.</p>';return;}
+ var r=ROUNDS[step];
+ dl.innerHTML='<div class="bubble"><b>Client:</b> '+esc(r.c)+'</div>'+r.a.map(function(a,i){return '<button class="choice" data-ch="'+i+'">'+esc(a.t)+'</button>';}).join('');
+ $$('[data-ch]').forEach(function(b){b.addEventListener('click',function(){var a=r.a[+b.dataset.ch];
+  cur=Math.max(cur+a.d,120);$('#finalRate').textContent='$'+cur;$('#finalRate').style.color=a.d===0?'var(--green-d)':'var(--mona-d)';
+  toast(a.d===0?'Rate holds at $'+cur:'Rate dropped $'+Math.abs(a.d),a.d===0?'g':'r');
+  var p=a.d===0?'<span class="pill p-green">held</span>':'<span class="pill p-mona">−$'+Math.abs(a.d)+'</span>';
+  $('#log').insertAdjacentHTML('beforeend','<div class="row"><div style="flex:1"><b>Round '+(step+1)+'</b> '+p+'<div class="sub">'+esc(a.n)+'</div></div></div>');
+  step++;renderDrill();});});}
+$('#resetDrill').addEventListener('click',function(){step=0;cur=480;$('#log').innerHTML='';$('#finalRate').textContent='$480';$('#finalRate').style.color='var(--green-d)';renderDrill();});
+renderDrill();
+
+var BD=[{t:"What we need is the five onboarding emails rewritten.",a:"deliverable",n:"A clear deliverable. Write the number down, because “five” becomes “seven” if it isn't in writing."},
+{t:"The current ones don't land. Make them pop a bit more.",a:"vague",n:"Vague and dangerous. “Pop” can't be verified, so revisions will never end. Ask for an example they like."},
+{t:"Oh and it'd be great if you could take a quick look at the pricing page while you're in there.",a:"creep",n:"Scope creep wrapped in friendliness. “Quick” and “while you're in there” are the tells."},
+{t:"We've got about three weeks before launch.",a:"deliverable",n:"A deadline is part of scope, not a side note."},
+{t:"I'll need to run the final past Marieke, she handles the budget.",a:"budget",n:"The person you're talking to isn't the decision maker."},
+{t:"Last person we worked with charged around two thousand for a bigger package.",a:"budget",n:"A price anchor handed to you for free. Ignoring it means negotiating blind."}];
+var CATS=[["deliverable","Deliverable","p-sky"],["creep","Scope creep","p-mona"],["budget","Budget signal","p-rose"],["vague","Needs clarifying","p-purple"]];
+var bdAns={};
+$('#playBrief').addEventListener('click',function(){$('#bdBody').hidden=false;this.disabled=true;this.textContent='Recording finished';
+ $('#playNote').textContent='Transcript unlocked. In real life you never get a transcript — which is why this drill starts with listening.';toast('Transcript unlocked','p');});
+$('#bdList').innerHTML=BD.map(function(l,i){return '<div class="box plain" style="margin-bottom:10px"><p style="font-size:14.5px">“'+esc(l.t)+'”</p><div class="tagrow" style="margin:9px 0 0">'+CATS.map(function(c){return '<button class="btn ghost b-sm" data-bd="'+i+'" data-c="'+c[0]+'" aria-pressed="false">'+c[1]+'</button>';}).join('')+'</div></div>';}).join('');
+$$('[data-bd]').forEach(function(b){b.addEventListener('click',function(){var i=b.dataset.bd;bdAns[i]=b.dataset.c;
+ $$('[data-bd="'+i+'"]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});});
+$('#bdCheck').addEventListener('click',function(){var r=0;
+ var det=BD.map(function(l,i){var ok=bdAns[i]===l.a;if(ok)r++;var lb=CATS.filter(function(c){return c[0]===l.a;})[0];
+  return '<div class="box '+(ok?'good':'bad')+' sp8"><span class="pill '+(ok?'p-green':'p-mona')+'">'+(ok?'correct':'missed')+'</span> <span class="pill '+lb[2]+'">'+lb[1]+'</span><p class="sub sp8" style="color:var(--ink)">“'+esc(l.t)+'” — '+esc(l.n)+'</p></div>';}).join('');
+ toast(r+' of 6 correct',r===6?'g':'r');
+ $('#bdOut').innerHTML='<div class="box '+(r===6?'good':(r>=4?'warn':'bad'))+'"><b>'+r+' of 6 correct.</b><div class="sub" style="color:var(--ink)">A proficiency test asks whether you understood. This asks whether you caught what would cost you money.</div></div>'+det;});
+
+var AL=[["RA","Rani","Copywriting","Malang","$80","$620","var(--amethyst)","I used to drop the price the second anyone pushed. Now I ask them which part they'd like removed."],
+["BS","Bagas","Graphic design","Yogyakarta","$120","$540","var(--green)","What changed wasn't my grammar. It was learning to stay silent after saying the number."],
+["AY","Ayu","Video editing","Denpasar","$95","$380","var(--illusion)","I used to write “unlimited revisions”. Now I know that means working for free."],
+["DP","Dimas","Copywriting","Malang","$60","$450","var(--sky)","My first client was German. Turns out they aren't native speakers either."],
+["FH","Fahri","Web development","Makassar","$200","$890","var(--rose)","My crew was the one who spotted that my closing line sounded like begging."],
+["NS","Nisa","Graphic design","Semarang","$70","$310","var(--slate)","Not huge yet, but it's the first time dollars ever landed in my account."]];
+var alF="";
+var skills=AL.map(function(a){return a[2];}).filter(function(v,i,ar){return ar.indexOf(v)===i;});
+$('#alumFilter').innerHTML='<button class="btn ghost b-sm" data-af="" aria-pressed="true">All skills</button>'+skills.map(function(s){return '<button class="btn ghost b-sm" data-af="'+esc(s)+'" aria-pressed="false">'+esc(s)+'</button>';}).join('');
+function alDraw(){var rows=AL.filter(function(a){return !alF||a[2]===alF;});
+ $('#alumList').innerHTML=rows.map(function(a){return '<div class="tst"><div style="display:flex;gap:11px;align-items:center"><span class="tavatar" style="background:'+a[6]+'">'+a[0]+'</span><div><b style="font-size:15px">'+a[1]+'</b><div class="sub">'+a[2]+' · '+a[3]+'</div></div></div>'
+ +'<div style="display:flex;gap:10px;align-items:baseline;margin-top:13px"><span style="font-size:17px;font-weight:900;color:#C24F4F;text-decoration:line-through">'+a[4]+'</span><span class="arrowup">→</span><span style="font-size:26px;font-weight:900;color:#3E8A35;letter-spacing:-1px">'+a[5]+'</span></div>'
+ +'<div class="sub" style="margin-top:3px">first contract vs latest, both verified</div>'
+ +'<p class="sub sp8" style="color:var(--ink);font-style:italic">“'+a[7]+'”</p></div>';}).join('');}
+$$('[data-af]').forEach(function(b){b.addEventListener('click',function(){$$('[data-af]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});alF=b.dataset.af;alDraw();});});
+alDraw();
+
+var CITIES=[["Malang",2,"March","Copywriting is full"],["Yogyakarta",4,"March",""],["Denpasar",6,"March",""],["Makassar",3,"April",""],
+["Semarang",5,"April",""],["Pontianak",8,"April",""],["Surabaya",1,"March","Almost full"],["Bandung",0,"May","This cohort is full"],
+["Medan",7,"April",""],["Balikpapan",6,"May",""],["Padang",9,"May",""],["Manado",5,"May",""]];
+$('#citySel').innerHTML=CITIES.map(function(c){return '<option>'+c[0]+'</option>';}).join('')+'<option>My city isn\'t listed</option>';
+$('#cityGo').addEventListener('click',function(){
+ var v=$('#citySel').value,sk=$('#skillSel').value,c=CITIES.filter(function(x){return x[0]===v;})[0];
+ if(!c){$('#cityOut').innerHTML='<div class="box warn"><b>No Hangar in your city yet.</b><p class="sub sp8" style="color:var(--ink)">You can still join the <b>online Hangar Club</b> for the monthly Open Hangar and paired practice, then move into a cohort once the nearest Hangar opens.</p><button class="btn b-sky b-sm sp8">Join the online Hangar Club</button></div>';toast('Online Hangar Club available','p');return;}
+ var full=c[1]===0;
+ $('#cityOut').innerHTML='<div class="box '+(full?'bad':'good')+'"><h4>Hangar '+c[0]+'</h4>'
+ +'<div class="kv sp8"><span>Seats left</span><b>'+(full?'full':c[1]+' seats')+'</b></div>'
+ +'<div class="kv"><span>Next cohort</span><b>'+c[2]+'</b></div>'
+ +'<div class="kv"><span>Your skill</span><b>'+esc(sk)+'</b></div>'
+ +(c[3]?'<div class="box warn sp8"><b>Note:</b> '+c[3]+'. Seats per skill are capped so graduates don\'t undercut each other in the same market.</div>':'')
+ +'<button class="btn '+(full?'ghost':'b-green')+' sp8">'+(full?'Join the waiting list':'Apply now')+'</button></div>';
+ toast(full?'This cohort is full · waiting list open':c[1]+' seats left in '+c[0],full?'r':'g');});
+
+var QZ=[{q:"Can you explain your work in written English?",o:[["Comfortably",2],["Slowly, but yes",1],["I struggle",0]]},
+{q:"Have you spoken English on a call with a foreigner?",o:[["Several times",2],["Once or twice",1],["Never",0]]},
+{q:"Do you have work samples you could show a client?",o:[["Several",2],["One or two",1],["None yet",0]]}];
+var qa={};
+function qzDraw(){$('#quiz').innerHTML=QZ.map(function(q,i){return '<div style="margin-bottom:13px"><div style="font-size:14px;font-weight:800">'+q.q+'</div><div class="tagrow" style="margin-top:7px">'+q.o.map(function(o){return '<button class="btn ghost b-sm" data-qz="'+i+'" data-v="'+o[1]+'" aria-pressed="'+(qa[i]===o[1])+'">'+o[0]+'</button>';}).join('')+'</div></div>';}).join('');
+ $$('[data-qz]').forEach(function(b){b.addEventListener('click',function(){qa[+b.dataset.qz]=+b.dataset.v;qzDraw();
+  if(Object.keys(qa).length===3){var s=qa[0]+qa[1]+qa[2];
+   var r=s>=5?["Ready for a cohort","You can start with Dutch, German and Nordic clients — most of them aren't native speakers either, and their register is direct.","good"]
+    :s>=3?["Start with a gentler market","You'd join a cohort with extra support on the speaking modules. Starting markets: Singapore and Australia.","warn"]
+    :["Join the Hangar Club first","This isn't a rejection. You attend Open Hangar and paired practice until the baseline is met, then move into the next cohort.","bad"];
+   $('#quizOut').innerHTML='<div class="box '+r[2]+'"><h4>'+r[0]+'</h4><p class="sub sp8" style="color:var(--ink)">'+r[1]+'</p></div>';
+   toast(r[0],s>=5?'g':'p');}});});}
+qzDraw();
+
+var FAQ=[["Is this genuinely free?","Yes. The training is funded from the national vocational budget, and you receive a transport allowance just like any other participant at a public training centre. Nothing is deducted from what you earn later."],
+["My English is still shaky. Can I join?","Yes, and that's the starting point. The intake doesn't reject anyone; it decides which client market suits you right now. Most Dutch and German clients aren't native speakers, so the threshold is different from US clients."],
+["What if I don't land a client in twelve weeks?","About four in ten participants land a first contract within the cycle. If you don't, you stay in the Hangar Club, keep attending Open Hangar, and apply for the next cohort. The portfolio and credential from the co-piloting phase remain yours."],
+["Can I do this alongside university or a job?","Yes. Two sessions a week, partly online. At partner campuses, a completed cycle can be converted into internship credit."],
+["Who are the mentors?","Working freelancers with current foreign clients, not lecturers. They receive an instructor fee, and your crew also helps deliver their client projects, so the arrangement runs both ways."],
+["Is my freelance account data safe?","Only contract value, client country and date are read, through read-only access. The contents of your work, your client messages, and any other transactions in your account are never accessed."],
+["Why do I have to review other people's proposals?","Because editing someone else's writing trains your language harder than writing your own. Across one cycle you draft around ten proposals and critically read twenty belonging to others."],
+["What am I committed to after graduating?","One thing: supporting the following cohort as a peer reviewer for a single cycle. What you return is time, not money."]];
+$('#faqList').innerHTML=FAQ.map(function(f,i){return '<div class="faq" data-open="false"><button class="faqq" data-faq="'+i+'" aria-expanded="false">'+esc(f[0])+'<span class="faqi">+</span></button><div class="faqa" hidden>'+esc(f[1])+'</div></div>';}).join('');
+$$('[data-faq]').forEach(function(b){b.addEventListener('click',function(){var p=b.parentElement,open=p.dataset.open==='true';
+ p.dataset.open=open?'false':'true';b.setAttribute('aria-expanded',!open);p.querySelector('.faqa').hidden=open;});});
+
+/* ===== app ===== */
+var PH=[["Week 0","Flight Check, transport allowance paid","done"],["Weeks 1–3","Ground school, two practice proposals","done"],
+["Weeks 4–7","Co-piloting and Shadow Calls, portfolio begins","done"],["Weeks 8–11","Solo flight, review gate active","now"],
+["Week 12","Logbook verification, credential issued","next"]];
+$('#timeline').innerHTML=PH.map(function(p){var c=p[2]==='done'?'var(--green)':(p[2]==='now'?'var(--rose)':'#D6E3E8'),m=p[2]==='done'?'✓':(p[2]==='now'?'•':'');
+ return '<div class="row"><span class="chk" style="background:'+c+'">'+m+'</span><div style="flex:1"><b>'+p[0]+'</b><div class="sub">'+p[1]+'</div></div></div>';}).join('');
+var SK=[["Reading","Live Posting Diagnostic and Brief Decoder","var(--sky)"],["Writing","Flight Plan and Case File","var(--amethyst)"],
+["Speaking","Cockpit Drill, Discovery Call, Shadow Call","var(--illusion)"],["Listening","Brief Decoder and Accent Exposure","var(--green)"]];
+$('#skills').innerHTML=SK.map(function(s){return '<div class="row"><span class="chk" style="background:'+s[2]+'">✓</span><div style="flex:1"><b>'+s[0]+'</b><div class="sub">'+s[1]+'</div></div></div>';}).join('');
+var FEED=[["DP","Dimas","sent a proposal to an Australian client after a third revision","12 minutes ago","var(--sky)"],
+["AY","Ayu","completed the Repair Drill on scope disputes","1 hour ago","var(--illusion)"],
+["NF","Naufal","approved two proposals and returned one","3 hours ago","var(--rose)"],
+["BS","Bagas","first contract verified, German client, $390","yesterday","var(--green)"]];
+$('#feed').innerHTML=FEED.map(function(f){return '<div class="row"><span class="chk" style="background:'+f[4]+';border-radius:10px">'+f[0]+'</span><div style="flex:1"><b>'+f[1]+'</b> <span class="sub">'+f[2]+'</span><div class="sub" style="font-size:11px">'+f[3]+'</div></div></div>';}).join('');
+
+var SC=[["Commercial comprehension",78,"var(--sky)"],["Spoken persuasion",54,"var(--illusion)"],["Negotiation register",61,"var(--amethyst)"],["Conflict repair",72,"var(--green)"]];
+$('#bars').innerHTML=SC.map(function(s){return '<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800"><span>'+s[0]+'</span><span>'+s[1]+'</span></div><div class="meter" style="height:11px"><i style="width:'+s[1]+'%;background:'+s[2]+'"></i></div></div>';}).join('');
+var BANDS=[["Netherlands, Germany, Nordics","Clients are mostly non-native. Direct register, high tolerance.","open"],["Singapore, Australia","Open since week 6.","open"],
+["United States, United Kingdom","Opens once softener density drops below 4.0.","lock"],["Japan, Korea","A different kind of indirect register again.","lock"]];
+$('#bands').innerHTML=BANDS.map(function(b){var c=b[2]==='open'?'var(--green)':'var(--rose)';
+ return '<div class="row"><span class="chk" style="background:'+c+'">'+(b[2]==='open'?'✓':'•')+'</span><div style="flex:1"><b>'+b[0]+'</b><div class="sub">'+b[1]+'</div></div></div>';}).join('');
+var SI=[["Rewrite the five onboarding emails",true],["Review the pricing page",false],["Set the product pricing strategy",false],["Two revision rounds",true],["Start next week",true],["Ongoing tweaks after delivery",false]];
+$('#scopeTask').innerHTML=SI.map(function(it,i){return '<div class="row"><div style="flex:1">'+it[0]+'</div><button class="btn ghost b-sm" data-sc="'+i+'" data-v="in" aria-pressed="false">In scope</button><button class="btn ghost b-sm" data-sc="'+i+'" data-v="out" aria-pressed="false">Quote separately</button></div>';}).join('');
+var sa={};
+$$('[data-sc]').forEach(function(b){b.addEventListener('click',function(){var i=b.dataset.sc;sa[i]=b.dataset.v;
+ $$('[data-sc="'+i+'"]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});});});
+$('#scopeCheck').addEventListener('click',function(){var r=0,miss=[];
+ SI.forEach(function(it,i){var w=it[1]?'in':'out';if(sa[i]===w)r++;else if(sa[i])miss.push(it[0]);});
+ $('#scopeRes').innerHTML='<div class="box '+(r===6?'good':(r>=4?'warn':'bad'))+'"><b>'+r+' of 6 correct.</b><div class="sub" style="color:var(--ink)">'+(miss.length?'Wrong: '+esc(miss.join('; '))+'. ':'')+'“Would also be great if you could…” and “budget flexible” are invitations to expand scope.</div></div>';
+ toast(r+' of 6 correct',r===6?'g':'r');});
+
+var PT=[{b:"I will try to finish it by Friday.",g:"I will deliver it on Friday. If anything blocks that, I will tell you by Wednesday.",w:"You meant it as a commitment; what the client hears is doubt."},
+{b:"Sorry to bother you, just checking if you had time to look at my proposal?",g:"Following up on the proposal I sent Tuesday. Do you need anything else from me to decide?",w:"Apologising for existing. Removing it doesn't make you rude, only equal."},
+{b:"Maybe I can do it for $300 if that is too much for you.",g:"The scope as described is $480. I can bring it to $320 by removing the second revision round.",w:"A discount before anyone asked. Read as an admission your first number was inflated."},
+{b:"Yes of course, anything you need.",g:"That sits outside our agreed scope. I can quote it separately today.",w:"An indirect refusal is read as consent."}];
+$('#ptList').innerHTML=PT.map(function(p,i){return '<button class="choice" data-pt="'+i+'">“'+esc(p.b)+'”</button>';}).join('');
+$$('[data-pt]').forEach(function(b){b.addEventListener('click',function(){var p=PT[+b.dataset.pt];
+ $('#ptOut').innerHTML='<div class="box bad"><span class="pill p-mona">as you wrote it</span><p class="sp8">“'+esc(p.b)+'”</p></div><div class="box good sp8"><span class="pill p-green">low-context version</span><p class="sp8">“'+esc(p.g)+'”</p></div><div class="box warn sp8"><b>Why.</b> <span class="sub" style="color:var(--ink)">'+esc(p.w)+'</span></div>';});});
+
+var REG={us:["US client","Hi Sarah — I'd love to take this on. Here's what I'd do: three directions, two revision rounds, delivered in ten days. $480, half up front. Sound good?","Warm and direct. First name, contractions, a relaxed close."],
+de:["German client","Dear Ms Weber, Please find my proposal below. Deliverables: three design directions, two revision rounds, final files within ten working days. Fee: EUR 440, 50% on commencement.","Formal and structured. Explicit deliverables, minimal warmth, maximum clarity."],
+jp:["Japanese client","Dear Mr Tanaka, Thank you for considering my proposal. I would be glad to prepare three design directions with two revision rounds, delivered within ten working days. The fee would be USD 480, with 50% at the start.","Indirect, yet still explicit about the number. Politeness here is framing, not hedging."]};
+function drawReg(k){var r=REG[k];$('#regOut').innerHTML='<div class="box plain"><h4>'+r[0]+'</h4><p class="sp8" style="font-size:15px;line-height:1.7">'+esc(r[1])+'</p></div><div class="box warn sp8"><b>What changed.</b> <span class="sub" style="color:var(--ink)">'+esc(r[2])+'</span></div>';}
+$$('[data-reg]').forEach(function(b){b.addEventListener('click',function(){$$('[data-reg]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});drawReg(b.dataset.reg);});});
+drawReg('us');
+
+var REP=[{k:"Missed deadline",c:"It's Friday evening and the files aren't here. This is holding up our launch.",bad:"I am so sorry, I had some problems. I will try to send it as soon as possible.",good:"You will have the files Monday 09:00 my time. To protect your launch I am sending the three finished assets now. I am not billing the delay day.",w:"An apology without a new date calms nobody."},
+{k:"Scope dispute",c:"We assumed the social media versions were included in this price.",bad:"Okay, no problem, I can add them.",good:"The agreed scope covers the web versions. I can add nine social formats for $180 and deliver them with the main files on Monday.",w:"Conceding here teaches the client that any boundary can be moved."},
+{k:"Client goes quiet",c:"(no reply for eleven days after the first draft)",bad:"Hi, sorry to bother you again, just checking in, hope everything is okay?",good:"Checking in on the draft sent 3 March. I am holding your slot until Friday; after that I will move it and requote for the next opening.",w:"Chasing without a consequence isn't chasing."},
+{k:"Refund request",c:"We're not happy with the direction. We'd like a refund.",bad:"Okay, I will return the money. Sorry for wasting your time.",good:"Let's separate the brief from the execution. I will rework one direction at no cost this week. If it still misses, I refund the second instalment and you keep the research document.",w:"An immediate refund erases every trace of the work you did."}];
+$('#repTabs').innerHTML=REP.map(function(r,i){return '<button class="btn ghost b-sm" data-rp="'+i+'" aria-pressed="'+(i===0)+'">'+esc(r.k)+'</button>';}).join('');
+function drawRep(i){var r=REP[i];$('#repBody').innerHTML='<div class="bubble"><b>Client:</b> '+esc(r.c)+'</div><div class="box bad"><span class="pill p-mona">first instinct</span><p class="sp8">“'+esc(r.bad)+'”</p></div><div class="box good sp8"><span class="pill p-green">the response that holds value</span><p class="sp8">“'+esc(r.good)+'”</p></div><div class="box warn sp8"><b>Why.</b> <span class="sub" style="color:var(--ink)">'+esc(r.w)+'</span></div>';}
+$$('[data-rp]').forEach(function(b){b.addEventListener('click',function(){$$('[data-rp]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});drawRep(+b.dataset.rp);});});
+drawRep(0);
+
+var CT=[{k:"Won · $620",who:"Captain Naufal · Australian client",res:"good",
+t:[["00:41","Client: “What's your rate for something like this?”","The anchor moment. Naufal doesn't answer with a number; he asks back about scope."],
+["01:15","Naufal: “Before I quote, how many pages and who approves the final?”","Delays the price until scope is clear."],
+["02:30","Naufal: “That's $620, two revision rounds included.”","The number is said once, with no softeners around it."],
+["02:34","(four seconds of silence)","Staying silent after naming a price is the hardest thing for a beginner to do."]]},
+{k:"Lost · $0",who:"Second-cohort alumnus · US client",res:"bad",
+t:[["00:22","Client: “We have a pretty tight budget.”","The cadet had already lowered the price in his head before any number was said."],
+["00:50","Cadet: “I can be flexible, maybe around $150?”","Anchor set by himself, far too low."],
+["02:05","Cadet: “Okay no problem.”","Accepted below cost. This recording is kept precisely because it failed."]]}];
+$('#ctTabs').innerHTML=CT.map(function(c,i){return '<button class="btn ghost b-sm" data-ct="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c.k)+'</button>';}).join('');
+function drawCt(i){var c=CT[i];
+ $('#ctBody').innerHTML='<div class="box '+(c.res==='good'?'good':'bad')+'"><h4>'+esc(c.who)+'</h4><p class="sub" style="color:var(--ink)">Used with the client\'s permission. Company names removed.</p></div><div class="sp8">'+c.t.map(function(t){return '<div class="tline"><div class="tstamp">'+t[0]+'</div><div style="flex:1;min-width:170px"><b style="font-size:14px">'+esc(t[1])+'</b><div class="sub">'+esc(t[2])+'</div></div></div>';}).join('')+'</div>';}
+$$('[data-ct]').forEach(function(b){b.addEventListener('click',function(){$$('[data-ct]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});drawCt(+b.dataset.ct);});});
+drawCt(0);
+
+function cfDraw(){var res=$('#cfRes').value.trim(),link=$('#cfLink').value,ok=res.length>3;
+ $('#cfPub').disabled=!ok;
+ $('#cfNote').textContent=ok?(link?'Ready to publish, and it will carry the verified mark.':'Ready to publish, but without a Logbook link there is no verified mark.'):'The button unlocks once the measurable result is filled in.';
+ $('#cfPrev').innerHTML='<div class="box '+(ok?(link?'good':'warn'):'bad')+'"><h4>'+esc($('#cfTitle').value)+' '+(ok&&link?'<span class="pill p-green">verified</span>':(ok?'<span class="pill p-rose">not linked</span>':'<span class="pill p-mona">incomplete</span>'))+'</h4><p class="sub" style="color:var(--ink)"><b>Problem.</b> '+esc($('#cfProb').value)+'</p><p class="sub" style="color:var(--ink)"><b>Scope.</b> '+esc($('#cfScope').value)+'</p><p class="sub" style="color:var(--ink)"><b>Result.</b> '+(res?esc(res):'<span style="color:#C24F4F">not filled in — a portfolio without numbers says nothing</span>')+'</p></div>';}
+['#cfTitle','#cfProb','#cfScope','#cfRes'].forEach(function(s){$(s).addEventListener('input',cfDraw);});
+$('#cfLink').addEventListener('change',cfDraw);
+$('#cfPub').addEventListener('click',function(){$('#cfNote').textContent='Case file published and added to the Conversion Corpus.';toast('Case file published','g');});
+cfDraw();
+
+var LAY=[["Hangar Club","Open, permanent, one per city at the local training centre.","var(--downy)"],["Incubation crew","Closed, twelve weeks, six to eight people.","var(--amethyst)"],["Alumni and mentors","Required to support one following cycle.","var(--green)"]];
+$('#layers').innerHTML=LAY.map(function(l){return '<div class="row"><span class="chk" style="background:'+l[2]+'">→</span><div style="flex:1"><b>'+l[0]+'</b><div class="sub">'+l[1]+'</div></div></div>';}).join('');
+var CREW=[["RA","Rani","commercial comprehension 78","var(--amethyst)","p-purple"],["DP","Dimas","negotiation register 83","var(--sky)","p-sky"],
+["AY","Ayu","conflict repair 80","var(--illusion)","p-mona"],["BS","Bagas","spoken persuasion 76","var(--green)","p-green"],
+["NF","Naufal","Captain · working freelancer","var(--rose)","p-rose"]];
+$('#crew').innerHTML=CREW.map(function(c){return '<div class="mem" style="margin-bottom:8px"><span class="d" style="background:'+c[3]+'">'+c[0]+'</span><div style="flex:1"><b>'+c[1]+'</b> <span class="pill '+c[4]+'">'+c[2]+'</span></div></div>';}).join('');
+var DIMS=["Commercial clarity","Negotiation strength","Scope fencing","Tone and register"];
+var QUEUE=[["Dimas's proposal · Australian client","Hi there, I am a video editor and I would be happy to help with anything you need for your channel. I can probably do it quite fast. Price is flexible."],
+["Ayu's proposal · German client","Dear Mr Klein, I can rewrite the six product pages. Two revision rounds included. Fee EUR 390, half on start."]];
+var qi=0,scores={},done=0;
+function rubricDraw(){$('#revWho').textContent=QUEUE[qi][0];$('#revText').textContent='“'+QUEUE[qi][1]+'”';
+ $('#rubric').innerHTML=DIMS.map(function(d,i){return '<div class="rub"><div style="flex:1;font-size:13.5px">'+d+'</div><div class="dots">'+[1,2,3,4].map(function(n){return '<button class="dot" data-dim="'+i+'" data-n="'+n+'" aria-pressed="'+(scores[i]===n)+'">'+n+'</button>';}).join('')+'</div></div>';}).join('');
+ $$('[data-dim]').forEach(function(b){b.addEventListener('click',function(){scores[+b.dataset.dim]=+b.dataset.n;rubricDraw();gate();});});}
+function gate(){var f=DIMS.every(function(_,i){return scores[i];}),n=$('#revNote').value.trim().length>=20;$('#revSubmit').disabled=!(f&&n);}
+$('#revNote').addEventListener('input',gate);
+$('#revSubmit').addEventListener('click',function(){done++;scores={};$('#revNote').value='';qi=Math.min(qi+1,QUEUE.length-1);
+ $('#credit').textContent=done+' of 2';$('#hCredit').textContent=done+'/2';
+ $('#revState').textContent='Reviews submitted: '+done+' of 2.'+(done>=2?' Your own submission gate is now open.':'');
+ toast(done>=2?'Credit met · Build gate unlocked':'Review '+done+' of 2 submitted',done>=2?'g':'p');
+ if(done>=2){var c1=$('#c1');c1.textContent='✓';c1.style.background='var(--green)';$('#askMentor').disabled=false;
+  $('#sendNote').textContent='Credit met. Now request mentor approval.';$('#revSubmit').disabled=true;$('#revSubmit').textContent='Weekly credit complete';}
+ rubricDraw();gate();});
+rubricDraw();
+$('#askMentor').addEventListener('click',function(){$('#mstate').textContent='approved by Captain Naufal';
+ var c2=$('#c2');c2.textContent='✓';c2.style.background='var(--green)';$('#send').disabled=false;
+ $('#sendNote').textContent='Gate open. The proposal goes out under the crew profile.';this.disabled=true;toast('Mentor approved','g');});
+$('#send').addEventListener('click',function(){$('#sendNote').innerHTML='<b>Sent.</b> This draft\'s language features are logged to the Conversion Corpus.';this.disabled=true;toast('Proposal sent','g');});
+
+var MS=[["Crew Clinic","Wednesday 19:00 · 90 minutes · 8 people","var(--amethyst)","One mentor, one crew. Three proposals taken apart together on screen rather than lectured at. The agenda comes from whatever went wrong in Flight Plan that week, so no two clinics are the same."],
+["Proposal sign-off","Asynchronous · about 10 minutes each","var(--sky)","The mentor comments on specific lines, then approves or returns the draft. Nothing reaches a client without passing this gate."],
+["Shadow Call","Weeks 4–7","var(--rose)","You sit in on the mentor's real client call. You listen at first, then you're handed one section to run yourself."],
+["One-to-one debrief","After every contract · 30 minutes","var(--green)","Held whether you won or lost. The subject isn't the outcome but the language decision at the moment the price moved."],
+["Captain's Hour","Monthly · open to the whole city","var(--downy)","The mentor plays a recording of their own negotiation in front of every crew in the city and explains their word choices."]];
+$('#msList').innerHTML=MS.map(function(m,i){return '<button class="choice" data-ms="'+i+'" aria-pressed="'+(i===0)+'"><b>'+m[0]+'</b><div class="sub">'+m[1]+'</div></button>';}).join('');
+function drawMs(i){var m=MS[i];$('#msOut').innerHTML='<div class="box plain" style="border-left:8px solid '+m[2]+'"><h4>'+m[0]+'</h4><p class="sub" style="color:var(--ink)">'+esc(m[3])+'</p></div>';}
+$$('[data-ms]').forEach(function(b){b.addEventListener('click',function(){$$('[data-ms]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});drawMs(+b.dataset.ms);});});
+drawMs(0);
+
+var KK={"Germany|Copywriting":[["Softeners below 4 per 100 words","+31% acceptance",88],["Price stated in the first paragraph","+18% contract value",64],["Explicit revision fence","−72% scope disputes",81]],
+"United States|Copywriting":[["Opening sentence under 12 words","+24% reply rate",71],["A number from past results","+27% contract value",79],["Softeners below 4 per 100 words","+22% acceptance",68]],
+"Australia|Copywriting":[["Warm tone with contractions","+15% reply rate",52],["Explicit revision fence","−64% scope disputes",74],["Deposit stated in the proposal","+19% contract value",58]]};
+function kkDraw(){var k=$('#kkMarket').value+'|'+$('#kkSkill').value,d=KK[k]||KK[$('#kkMarket').value+'|Copywriting'];
+ $('#kkOut').innerHTML=d.map(function(r){return '<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:800"><span>'+r[0]+'</span><span style="color:#3E8A35">'+r[1]+'</span></div><div class="meter" style="height:10px"><i style="width:'+r[2]+'%;background:var(--slate)"></i></div></div>';}).join('');}
+$('#kkMarket').addEventListener('change',kkDraw);$('#kkSkill').addEventListener('change',kkDraw);kkDraw();
+
+runCounters('#home');
+})();
+</script>
+</body>
+</html>
